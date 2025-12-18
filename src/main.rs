@@ -4,7 +4,7 @@ use anyhow::Result;
 use clap::Parser;
 
 use dtx::cli::args::{Cli, Commands};
-use dtx::cli::commands::{auto, convert, csv, json, query, toml, xml, yaml};
+use dtx::cli::commands::{auto, convert, csv, diff, json, query, schema, toml, validate, xml, yaml};
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
@@ -23,6 +23,9 @@ fn main() -> Result<()> {
         Commands::Auto(args) => auto::execute(args)?,
         Commands::Convert(args) => convert::execute(args)?,
         Commands::Query(args) => query::execute(args)?,
+        Commands::Validate(args) => validate::execute(args)?,
+        Commands::Diff(args) => diff::execute(args)?,
+        Commands::Schema(args) => schema::execute(args)?,
     }
 
     Ok(())

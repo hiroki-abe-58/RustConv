@@ -41,6 +41,15 @@ pub enum Commands {
 
     /// Query and transform data using JSONPath and filters
     Query(QueryArgs),
+
+    /// Validate data against schema or lint for issues
+    Validate(ValidateArgs),
+
+    /// Compare two files and show differences
+    Diff(DiffArgs),
+
+    /// Generate JSON Schema from data
+    Schema(SchemaArgs),
 }
 
 /// Arguments for the json subcommand
@@ -197,6 +206,70 @@ pub struct QueryArgs {
     /// Output compact JSON
     #[arg(short, long)]
     pub compact: bool,
+
+    /// Output without syntax highlighting
+    #[arg(long)]
+    pub raw: bool,
+}
+
+/// Arguments for the validate subcommand
+#[derive(Parser, Debug)]
+pub struct ValidateArgs {
+    /// Input file (reads from stdin if not provided)
+    pub input: Option<PathBuf>,
+
+    /// JSON Schema file to validate against
+    #[arg(short, long)]
+    pub schema: Option<PathBuf>,
+
+    /// Specify input format (auto-detected if not specified)
+    #[arg(short, long)]
+    pub format: Option<String>,
+
+    /// Treat first row as data (for CSV)
+    #[arg(long)]
+    pub no_headers: bool,
+}
+
+/// Arguments for the diff subcommand
+#[derive(Parser, Debug)]
+pub struct DiffArgs {
+    /// First file to compare
+    pub file1: PathBuf,
+
+    /// Second file to compare
+    pub file2: PathBuf,
+
+    /// Output JSON Patch format (RFC 6902)
+    #[arg(long)]
+    pub patch: bool,
+
+    /// Side-by-side comparison
+    #[arg(short, long)]
+    pub side_by_side: bool,
+
+    /// Show only summary of changes
+    #[arg(long)]
+    pub summary: bool,
+}
+
+/// Arguments for the schema subcommand
+#[derive(Parser, Debug)]
+pub struct SchemaArgs {
+    /// Input file (reads from stdin if not provided)
+    pub input: Option<PathBuf>,
+
+    /// Output file (outputs to stdout if not specified)
+    #[arg(short, long)]
+    pub output: Option<PathBuf>,
+
+    /// Generate TypeScript interface instead of JSON Schema
+    #[arg(long)]
+    pub typescript: bool,
+
+    /// Name for generated type/interface
+    #[arg(long)]
+    pub name: Option<String>,
 
     /// Output without syntax highlighting
     #[arg(long)]

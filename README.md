@@ -1,6 +1,6 @@
 # dtx - Data Transformation CLI
 
-A Swiss Army knife CLI tool for data transformation. Convert, query, and validate data between JSON, YAML, TOML, CSV, and XML formats.
+A Swiss Army knife CLI tool for data transformation. Convert, query, validate, and compare data between JSON, YAML, TOML, CSV, and XML formats.
 
 ## Installation
 
@@ -82,6 +82,66 @@ dtx query data.json -q '$.items' --unique
 dtx query data.json -q '$.items' --count
 ```
 
+### Validation
+
+```bash
+# Lint JSON for issues
+dtx validate data.json
+
+# Lint YAML
+dtx validate config.yaml
+
+# Lint TOML
+dtx validate config.toml
+
+# Validate CSV structure
+dtx validate data.csv
+
+# Validate against JSON Schema
+dtx validate data.json --schema schema.json
+
+# Specify format explicitly
+dtx validate data.json --format json
+```
+
+### Diff (Compare Files)
+
+```bash
+# Compare two JSON files (unified diff)
+dtx diff file1.json file2.json
+
+# Compare different formats (auto-converts for comparison)
+dtx diff data.json data.yaml
+
+# Side-by-side comparison
+dtx diff file1.json file2.json --side-by-side
+
+# JSON Patch format (RFC 6902)
+dtx diff file1.json file2.json --patch
+
+# Summary only
+dtx diff file1.json file2.json --summary
+```
+
+### Schema Generation
+
+```bash
+# Generate JSON Schema from data
+dtx schema data.json
+
+# Generate TypeScript interface
+dtx schema data.json --typescript
+
+# Specify interface name
+dtx schema data.json --typescript --name UserData
+
+# Output to file
+dtx schema data.json --output schema.json
+
+# Raw output (no syntax highlighting)
+dtx schema data.json --raw
+```
+
 ## Features
 
 ### Phase 1 (v0.1.0) - Foundation
@@ -104,6 +164,13 @@ dtx query data.json -q '$.items' --count
 - Filter expressions (==, !=, >, <, >=, <=, contains, startswith, endswith)
 - Field selection
 - Array operations (first, last, reverse, unique, count)
+
+### Phase 5 (v0.5.0) - Validation & Schema
+- JSON Schema validation
+- JSON/YAML/TOML/CSV linting
+- Diff comparison (unified, side-by-side, JSON Patch)
+- JSON Schema generation from data
+- TypeScript interface generation
 
 ## Query Examples
 
@@ -153,9 +220,49 @@ dtx query data.json -q '$.products' --filter 'price < 50' --first 5
 dtx query config.json --flatten --sort-keys
 ```
 
+## Validation Examples
+
+### JSON Schema Validation
+
+```bash
+# Define a schema (schema.json)
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "name": {"type": "string"},
+    "age": {"type": "integer", "minimum": 0}
+  },
+  "required": ["name", "age"]
+}
+
+# Validate data against schema
+dtx validate user.json --schema schema.json
+```
+
+### Linting Checks
+
+The linter checks for:
+- **JSON**: Syntax errors, empty objects/arrays, similar keys (case differences), mixed array types
+- **YAML**: Syntax errors, tab characters, trailing whitespace, inconsistent indentation
+- **TOML**: Syntax errors, trailing whitespace, long lines
+- **CSV**: Column count consistency, empty cells, duplicate headers
+
+## Diff Examples
+
+```bash
+# See what changed between versions
+dtx diff config-old.json config-new.json
+
+# Generate JSON Patch for API updates
+dtx diff old-api.json new-api.json --patch
+
+# Quick overview of changes
+dtx diff v1.yaml v2.yaml --summary
+```
+
 ## Roadmap
 
-- **Phase 5**: Schema validation and diff
 - **Phase 6**: Merge, patch, template, and batch processing
 - **Phase 7**: i18n and shell completions
 - **Phase 8**: AI-powered natural language queries
