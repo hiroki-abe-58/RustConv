@@ -1,0 +1,7 @@
+name,version,license,downloads
+clap,4.0,MIT,1000000
+serde,1.0,MIT,5000000
+toml,0.8,MIT,500000
+csv,1.4,MIT,300000
+quick-xml,0.37,MIT,200000
+

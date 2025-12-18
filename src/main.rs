@@ -4,7 +4,7 @@ use anyhow::Result;
 use clap::Parser;
 
 use dtx::cli::args::{Cli, Commands};
-use dtx::cli::commands::{json, yaml};
+use dtx::cli::commands::{auto, csv, json, toml, xml, yaml};
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
@@ -17,6 +17,10 @@ fn main() -> Result<()> {
     match cli.command {
         Commands::Json(args) => json::execute(args)?,
         Commands::Yaml(args) => yaml::execute(args)?,
+        Commands::Toml(args) => toml::execute(args)?,
+        Commands::Csv(args) => csv::execute(args)?,
+        Commands::Xml(args) => xml::execute(args)?,
+        Commands::Auto(args) => auto::execute(args)?,
     }
 
     Ok(())

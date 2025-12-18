@@ -1,0 +1,22 @@
+[package]
+name = "dtx"
+version = "0.2.0"
+description = "Data Transformation Swiss Army Knife"
+
+[features]
+formats = ["json", "yaml", "toml", "csv", "xml"]
+auto_detect = true
+
+[metadata]
+author = "hiroki-abe-58"
+license = "MIT"
+downloads = 12345
+
+[[dependencies]]
+name = "clap"
+version = "4.0"
+
+[[dependencies]]
+name = "serde"
+version = "1.0"
+

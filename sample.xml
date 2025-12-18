@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package>
+    <name>dtx</name>
+    <version>0.2.0</version>
+    <description>Data Transformation Swiss Army Knife</description>
+    <features>
+        <format>json</format>
+        <format>yaml</format>
+        <format>toml</format>
+        <format>csv</format>
+        <format>xml</format>
+    </features>
+    <metadata author="hiroki-abe-58" license="MIT">
+        <downloads>12345</downloads>
+    </metadata>
+</package>
+
