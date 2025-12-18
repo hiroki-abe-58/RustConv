@@ -1,0 +1,31 @@
+[package]
+name = "dtx"
+version = "0.1.0"
+edition = "2021"
+authors = ["hiroki-abe-58"]
+description = "A Swiss Army knife CLI for data transformation between JSON, YAML, TOML, CSV, and XML"
+license = "MIT"
+repository = "https://github.com/hiroki-abe-58/dtx"
+keywords = ["cli", "json", "yaml", "data-transformation", "converter"]
+categories = ["command-line-utilities", "encoding"]
+
+[dependencies]
+# CLI framework
+clap = { version = "4", features = ["derive"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+
+# Terminal output
+colored = "2"
+
+# Error handling
+anyhow = "1"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
+

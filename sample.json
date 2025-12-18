@@ -1,0 +1,14 @@
+{
+  "name": "dtx",
+  "version": "0.1.0",
+  "description": "Data Transformation Swiss Army Knife",
+  "features": ["json", "yaml", "toml", "csv", "xml"],
+  "metadata": {
+    "author": "hiroki-abe-58",
+    "license": "MIT",
+    "active": true,
+    "downloads": 12345,
+    "rating": null
+  }
+}
+
