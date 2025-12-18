@@ -38,6 +38,9 @@ pub enum Commands {
 
     /// Convert between formats
     Convert(ConvertArgs),
+
+    /// Query and transform data using JSONPath and filters
+    Query(QueryArgs),
 }
 
 /// Arguments for the json subcommand
@@ -127,4 +130,75 @@ pub struct ConvertArgs {
     /// Suppress conversion messages
     #[arg(long)]
     pub quiet: bool,
+}
+
+/// Arguments for the query subcommand
+#[derive(Parser, Debug)]
+pub struct QueryArgs {
+    /// Input file (reads from stdin if not provided)
+    pub input: Option<PathBuf>,
+
+    /// JSONPath query (e.g., '$.users[*].name')
+    #[arg(short, long)]
+    pub query: Option<String>,
+
+    /// Extract all keys from objects
+    #[arg(long)]
+    pub keys: bool,
+
+    /// Extract all values from objects
+    #[arg(long)]
+    pub values: bool,
+
+    /// Flatten nested structure
+    #[arg(long)]
+    pub flatten: bool,
+
+    /// Separator for flattened keys (default: ".")
+    #[arg(long)]
+    pub separator: Option<String>,
+
+    /// Sort object keys alphabetically
+    #[arg(long)]
+    pub sort_keys: bool,
+
+    /// Filter array elements (e.g., 'age > 20')
+    #[arg(long)]
+    pub filter: Option<String>,
+
+    /// Select specific fields (comma-separated)
+    #[arg(long)]
+    pub select: Option<String>,
+
+    /// Get unique values from array
+    #[arg(long)]
+    pub unique: bool,
+
+    /// Count elements
+    #[arg(long)]
+    pub count: bool,
+
+    /// Reverse array elements
+    #[arg(long)]
+    pub reverse: bool,
+
+    /// Get first N elements
+    #[arg(long)]
+    pub first: Option<usize>,
+
+    /// Get last N elements
+    #[arg(long)]
+    pub last: Option<usize>,
+
+    /// Apply operations recursively
+    #[arg(short, long)]
+    pub recursive: bool,
+
+    /// Output compact JSON
+    #[arg(short, long)]
+    pub compact: bool,
+
+    /// Output without syntax highlighting
+    #[arg(long)]
+    pub raw: bool,
 }

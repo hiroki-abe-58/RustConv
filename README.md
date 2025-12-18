@@ -21,29 +21,15 @@ cargo build --release
 ### Format-specific Commands
 
 ```bash
-# JSON
+# JSON, YAML, TOML, CSV, XML
 dtx json input.json
-dtx json input.json --compact
-
-# YAML
 dtx yaml input.yaml
-
-# TOML
 dtx toml input.toml
-dtx toml input.toml --compact
-
-# CSV (displays as formatted table)
 dtx csv input.csv
-dtx csv input.csv --raw          # Output raw CSV
-dtx csv input.csv --no-headers   # First row is data
-
-# XML
 dtx xml input.xml
-dtx xml input.xml --compact
 
 # Auto-detect format
 dtx auto input.json
-dtx auto input.yaml --quiet
 ```
 
 ### Format Conversion
@@ -52,93 +38,127 @@ dtx auto input.yaml --quiet
 # Basic conversion
 dtx convert input.json --to yaml
 dtx convert input.yaml --to json
-dtx convert input.json --to toml
 dtx convert data.csv --to json
 
-# Multiple target formats (comma-separated)
+# Multiple target formats
 dtx convert input.json --to yaml,toml,csv
-
-# Specify source format explicitly
-dtx convert input.txt --from json --to yaml
 
 # Output to file
 dtx convert input.json --to yaml --output output.yaml
-
-# Pipe from stdin
-cat data.json | dtx convert --from json --to yaml
 ```
 
-### Supported Conversions
+### Query and Transform
 
-| From | To JSON | To YAML | To TOML | To CSV | To XML |
-|------|---------|---------|---------|--------|--------|
-| JSON | -       | Yes     | Yes     | Yes*   | Yes    |
-| YAML | Yes     | -       | Yes     | Yes*   | Yes    |
-| TOML | Yes     | Yes     | -       | Yes*   | Yes    |
-| CSV  | Yes     | Yes     | -       | -      | -      |
-| XML  | Yes     | Yes     | -       | -      | -      |
+```bash
+# JSONPath query
+dtx query data.json -q '$.users[*].name'
+dtx query data.json -q '$.store.book[?(@.price < 10)]'
 
-*CSV conversion requires array of objects structure
+# Extract keys/values
+dtx query data.json --keys
+dtx query data.json --values
+dtx query data.json --keys --recursive
+
+# Flatten nested structure
+dtx query data.json --flatten
+dtx query data.json --flatten --separator "_"
+
+# Sort keys
+dtx query data.json --sort-keys
+
+# Filter array elements
+dtx query data.json -q '$.users' --filter 'age > 25'
+dtx query data.json -q '$.users' --filter 'name == "Alice"'
+dtx query data.json -q '$.items' --filter 'status contains active'
+
+# Select specific fields
+dtx query data.json -q '$.users' --select 'name,email'
+
+# Array operations
+dtx query data.json -q '$.items' --first 5
+dtx query data.json -q '$.items' --last 3
+dtx query data.json -q '$.items' --reverse
+dtx query data.json -q '$.items' --unique
+dtx query data.json -q '$.items' --count
+```
 
 ## Features
 
 ### Phase 1 (v0.1.0) - Foundation
 - JSON/YAML reading and pretty printing
-- Standard input / file input support
 - Syntax highlighting with color output
 
 ### Phase 2 (v0.2.0) - Format Support
 - TOML/CSV/XML reading and pretty printing
-- Auto format detection (from extension and content)
-- CSV table formatting
+- Auto format detection
 
 ### Phase 3 (v0.3.0) - Conversion Engine
 - Full cross-format conversion support
 - Multiple target formats in single command
-- File output support
-- Intermediate JSON representation for lossless conversion
+
+### Phase 4 (v0.4.0) - Query & Transform
+- JSONPath query support
+- Key/value extraction
+- Flatten nested structures
+- Sort keys
+- Filter expressions (==, !=, >, <, >=, <=, contains, startswith, endswith)
+- Field selection
+- Array operations (first, last, reverse, unique, count)
+
+## Query Examples
+
+### JSONPath Syntax
+
+```bash
+# Get all user names
+dtx query users.json -q '$.users[*].name'
+
+# Get first user
+dtx query users.json -q '$.users[0]'
+
+# Get users with specific property
+dtx query users.json -q '$.users[?(@.active == true)]'
+
+# Nested path
+dtx query data.json -q '$.store.book[*].author'
+```
+
+### Filter Expressions
+
+```bash
+# Numeric comparison
+dtx query data.json -q '$.items' --filter 'price > 100'
+dtx query data.json -q '$.users' --filter 'age >= 18'
+
+# String comparison
+dtx query data.json -q '$.users' --filter 'name == "Alice"'
+dtx query data.json -q '$.items' --filter 'category != "electronics"'
+
+# String operations
+dtx query data.json -q '$.products' --filter 'name contains phone'
+dtx query data.json -q '$.files' --filter 'path startswith /home'
+dtx query data.json -q '$.urls' --filter 'url endswith .html'
+```
+
+### Combining Operations
+
+```bash
+# Filter then select fields
+dtx query users.json -q '$.users' --filter 'age > 25' --select 'name,email'
+
+# Query, filter, and get first 5
+dtx query data.json -q '$.products' --filter 'price < 50' --first 5
+
+# Flatten and sort
+dtx query config.json --flatten --sort-keys
+```
 
 ## Roadmap
 
-- **Phase 4**: JSONPath query and jq-compatible filters
 - **Phase 5**: Schema validation and diff
 - **Phase 6**: Merge, patch, template, and batch processing
 - **Phase 7**: i18n and shell completions
 - **Phase 8**: AI-powered natural language queries
-
-## Examples
-
-### Convert JSON config to YAML
-
-```bash
-dtx convert config.json --to yaml
-```
-
-### Convert CSV data to JSON array
-
-```bash
-dtx convert users.csv --to json
-```
-
-Output:
-```json
-[
-  {"name": "Alice", "age": 30},
-  {"name": "Bob", "age": 25}
-]
-```
-
-### Convert XML to JSON
-
-```bash
-dtx convert data.xml --to json
-```
-
-### Batch convert to multiple formats
-
-```bash
-dtx convert config.json --to yaml,toml
-```
 
 ## License
 

@@ -1,0 +1,13 @@
+{
+  "users": [
+    {"name": "Alice", "age": 30, "city": "Tokyo"},
+    {"name": "Bob", "age": 25, "city": "Osaka"},
+    {"name": "Charlie", "age": 35, "city": "Tokyo"},
+    {"name": "Diana", "age": 28, "city": "Kyoto"}
+  ],
+  "metadata": {
+    "total": 4,
+    "active": true
+  }
+}
+
