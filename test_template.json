@@ -1,0 +1,8 @@
+{
+  "greeting": "Hello, {{ user.name }}!",
+  "config": {
+    "env": "{{ environment }}",
+    "version": "{{ version }}"
+  }
+}
+

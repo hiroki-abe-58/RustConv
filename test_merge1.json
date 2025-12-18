@@ -1,0 +1,10 @@
+{
+  "name": "Project A",
+  "version": "1.0",
+  "settings": {
+    "debug": true,
+    "timeout": 30
+  },
+  "tags": ["alpha", "beta"]
+}
+

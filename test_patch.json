@@ -1,0 +1,6 @@
+[
+  {"op": "replace", "path": "/name", "value": "Updated Name"},
+  {"op": "add", "path": "/newField", "value": "new value"},
+  {"op": "remove", "path": "/tags"}
+]
+

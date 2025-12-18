@@ -1,0 +1,20 @@
+continue_on_error: true
+jobs:
+  - name: "Validate JSON"
+    action: validate
+    input: "sample.json"
+    
+  - name: "Convert to YAML"
+    action: convert
+    input: "sample.json"
+    output: "output/sample.yaml"
+    to: "yaml"
+    
+  - name: "Merge configs"
+    action: merge
+    inputs:
+      - "test_merge1.json"
+      - "test_merge2.json"
+    output: "output/merged.json"
+    strategy: "concat"
+

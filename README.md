@@ -1,6 +1,6 @@
 # dtx - Data Transformation CLI
 
-A Swiss Army knife CLI tool for data transformation. Convert, query, validate, and compare data between JSON, YAML, TOML, CSV, and XML formats.
+A Swiss Army knife CLI tool for data transformation. Convert, query, validate, merge, and batch process data between JSON, YAML, TOML, CSV, and XML formats.
 
 ## Installation
 
@@ -142,6 +142,73 @@ dtx schema data.json --output schema.json
 dtx schema data.json --raw
 ```
 
+### Merge Files
+
+```bash
+# Deep merge (default) - recursively merge, later values win
+dtx merge config1.json config2.json
+
+# Shallow merge - only top-level keys
+dtx merge config1.json config2.json --strategy shallow
+
+# Concat arrays instead of replacing
+dtx merge config1.json config2.json --strategy concat
+
+# Union arrays (unique values only)
+dtx merge config1.json config2.json --strategy union
+
+# Output to file
+dtx merge base.yaml override.yaml --output merged.yaml
+
+# Specify output format
+dtx merge a.json b.yaml --format yaml
+```
+
+### Apply JSON Patch
+
+```bash
+# Apply patch to document
+dtx patch input.json --patch changes.json
+
+# Output to file
+dtx patch input.json --patch changes.json --output patched.json
+
+# Patch from stdin
+cat input.json | dtx patch --patch changes.json
+```
+
+### Template Rendering
+
+```bash
+# Render template with variables file
+dtx template template.json --vars variables.yaml
+
+# Set individual variables
+dtx template template.json --set name=Alice --set age=30
+
+# Include environment variables
+dtx template template.json --vars config.yaml --env
+
+# Strict mode - fail on missing variables
+dtx template template.json --vars partial.yaml --strict
+
+# Validate template without rendering
+dtx template template.json --vars config.yaml --validate
+```
+
+### Batch Processing
+
+```bash
+# Execute batch jobs from config
+dtx batch jobs.yaml
+
+# With variables
+dtx batch jobs.yaml --set env=production
+
+# Continue on error
+dtx batch jobs.yaml --continue-on-error
+```
+
 ## Features
 
 ### Phase 1 (v0.1.0) - Foundation
@@ -172,98 +239,87 @@ dtx schema data.json --raw
 - JSON Schema generation from data
 - TypeScript interface generation
 
-## Query Examples
+### Phase 6 (v0.6.0) - Merge & Utilities
+- Merge files with multiple strategies (deep, shallow, concat, union)
+- JSON Patch (RFC 6902) support
+- Template rendering with variable substitution
+- Batch processing for automation
 
-### JSONPath Syntax
+## Merge Strategies
 
-```bash
-# Get all user names
-dtx query users.json -q '$.users[*].name'
+| Strategy | Description |
+|----------|-------------|
+| `deep` | Recursively merge nested objects, later values win |
+| `shallow` | Only merge top-level keys |
+| `concat` | Concatenate arrays instead of replacing |
+| `union` | Merge arrays with unique values only |
 
-# Get first user
-dtx query users.json -q '$.users[0]'
+## Template Syntax
 
-# Get users with specific property
-dtx query users.json -q '$.users[?(@.active == true)]'
+Templates use `{{ variable }}` syntax for variable substitution:
 
-# Nested path
-dtx query data.json -q '$.store.book[*].author'
-```
-
-### Filter Expressions
-
-```bash
-# Numeric comparison
-dtx query data.json -q '$.items' --filter 'price > 100'
-dtx query data.json -q '$.users' --filter 'age >= 18'
-
-# String comparison
-dtx query data.json -q '$.users' --filter 'name == "Alice"'
-dtx query data.json -q '$.items' --filter 'category != "electronics"'
-
-# String operations
-dtx query data.json -q '$.products' --filter 'name contains phone'
-dtx query data.json -q '$.files' --filter 'path startswith /home'
-dtx query data.json -q '$.urls' --filter 'url endswith .html'
-```
-
-### Combining Operations
-
-```bash
-# Filter then select fields
-dtx query users.json -q '$.users' --filter 'age > 25' --select 'name,email'
-
-# Query, filter, and get first 5
-dtx query data.json -q '$.products' --filter 'price < 50' --first 5
-
-# Flatten and sort
-dtx query config.json --flatten --sort-keys
-```
-
-## Validation Examples
-
-### JSON Schema Validation
-
-```bash
-# Define a schema (schema.json)
+```json
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "object",
-  "properties": {
-    "name": {"type": "string"},
-    "age": {"type": "integer", "minimum": 0}
-  },
-  "required": ["name", "age"]
+  "greeting": "Hello, {{ user.name }}!",
+  "config": {
+    "env": "{{ environment }}",
+    "items": ["{{ items[0] }}", "{{ items[1] }}"]
+  }
 }
-
-# Validate data against schema
-dtx validate user.json --schema schema.json
 ```
 
-### Linting Checks
+Variables support:
+- Dot notation: `{{ user.address.city }}`
+- Array indexing: `{{ items[0] }}`
+- Nested paths: `{{ config.server.host }}`
 
-The linter checks for:
-- **JSON**: Syntax errors, empty objects/arrays, similar keys (case differences), mixed array types
-- **YAML**: Syntax errors, tab characters, trailing whitespace, inconsistent indentation
-- **TOML**: Syntax errors, trailing whitespace, long lines
-- **CSV**: Column count consistency, empty cells, duplicate headers
+## Batch Configuration
 
-## Diff Examples
+Batch configs support YAML, JSON, or TOML format:
 
-```bash
-# See what changed between versions
-dtx diff config-old.json config-new.json
+```yaml
+continue_on_error: true
+variables:
+  env: production
+jobs:
+  - name: "Validate config"
+    action: validate
+    input: "config.json"
+    schema: "schema.json"
 
-# Generate JSON Patch for API updates
-dtx diff old-api.json new-api.json --patch
+  - name: "Convert to YAML"
+    action: convert
+    input: "config.json"
+    output: "output/config.yaml"
+    to: "yaml"
 
-# Quick overview of changes
-dtx diff v1.yaml v2.yaml --summary
+  - name: "Merge configs"
+    action: merge
+    inputs:
+      - "base.json"
+      - "override.json"
+    output: "merged.json"
+    strategy: "deep"
+
+  - name: "Transform data"
+    action: transform
+    input: "data.json"
+    output: "users.json"
+    query: "$.users[*]"
 ```
+
+### Supported Batch Actions
+
+| Action | Description |
+|--------|-------------|
+| `convert` | Convert file between formats |
+| `merge` | Merge multiple files |
+| `validate` | Validate file (with optional schema) |
+| `copy` | Copy file |
+| `transform` | Apply JSONPath query |
 
 ## Roadmap
 
-- **Phase 6**: Merge, patch, template, and batch processing
 - **Phase 7**: i18n and shell completions
 - **Phase 8**: AI-powered natural language queries
 

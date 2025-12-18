@@ -1,0 +1,6 @@
+user:
+  name: Alice
+  email: alice@example.com
+environment: production
+version: "1.0.0"
+

@@ -50,6 +50,18 @@ pub enum Commands {
 
     /// Generate JSON Schema from data
     Schema(SchemaArgs),
+
+    /// Merge multiple files into one
+    Merge(MergeArgs),
+
+    /// Apply JSON Patch (RFC 6902) to a document
+    Patch(PatchArgs),
+
+    /// Render template with variable substitution
+    Template(TemplateArgs),
+
+    /// Execute batch jobs from config file
+    Batch(BatchArgs),
 }
 
 /// Arguments for the json subcommand
@@ -274,4 +286,113 @@ pub struct SchemaArgs {
     /// Output without syntax highlighting
     #[arg(long)]
     pub raw: bool,
+}
+
+/// Arguments for the merge subcommand
+#[derive(Parser, Debug)]
+pub struct MergeArgs {
+    /// Files to merge (at least 2 required)
+    #[arg(required = true, num_args = 2..)]
+    pub files: Vec<PathBuf>,
+
+    /// Output file (outputs to stdout if not specified)
+    #[arg(short, long)]
+    pub output: Option<PathBuf>,
+
+    /// Merge strategy: deep, shallow, concat, union
+    #[arg(short, long)]
+    pub strategy: Option<String>,
+
+    /// Output format (json, yaml, toml)
+    #[arg(short, long)]
+    pub format: Option<String>,
+
+    /// Suppress output messages
+    #[arg(short, long)]
+    pub quiet: bool,
+}
+
+/// Arguments for the patch subcommand
+#[derive(Parser, Debug)]
+pub struct PatchArgs {
+    /// Input document (reads from stdin if not provided)
+    pub input: Option<PathBuf>,
+
+    /// JSON Patch file to apply
+    #[arg(short, long, required = true)]
+    pub patch: PathBuf,
+
+    /// Output file (outputs to stdout if not specified)
+    #[arg(short, long)]
+    pub output: Option<PathBuf>,
+
+    /// Suppress output messages
+    #[arg(short, long)]
+    pub quiet: bool,
+
+    /// Output without syntax highlighting
+    #[arg(long)]
+    pub raw: bool,
+}
+
+/// Arguments for the template subcommand
+#[derive(Parser, Debug)]
+pub struct TemplateArgs {
+    /// Template file (reads from stdin if not provided)
+    pub template: Option<PathBuf>,
+
+    /// Variables file (JSON or YAML)
+    #[arg(short, long)]
+    pub vars: Option<PathBuf>,
+
+    /// Set individual variables (key=value)
+    #[arg(long, action = clap::ArgAction::Append)]
+    pub set: Vec<String>,
+
+    /// Include environment variables
+    #[arg(short, long)]
+    pub env: bool,
+
+    /// Output file (outputs to stdout if not specified)
+    #[arg(short, long)]
+    pub output: Option<PathBuf>,
+
+    /// Output format (json, yaml)
+    #[arg(short, long)]
+    pub format: Option<String>,
+
+    /// Fail on missing variables
+    #[arg(long)]
+    pub strict: bool,
+
+    /// Validate template without rendering
+    #[arg(long)]
+    pub validate: bool,
+
+    /// Suppress output messages
+    #[arg(short, long)]
+    pub quiet: bool,
+
+    /// Output without syntax highlighting
+    #[arg(long)]
+    pub raw: bool,
+}
+
+/// Arguments for the batch subcommand
+#[derive(Parser, Debug)]
+pub struct BatchArgs {
+    /// Batch config file (YAML, JSON, or TOML)
+    pub config: PathBuf,
+
+    /// Set variables for batch jobs (key=value)
+    #[arg(long, action = clap::ArgAction::Append)]
+    pub set: Vec<String>,
+
+    /// Continue on error
+    #[arg(long)]
+    pub continue_on_error: bool,
+
+    /// Suppress output messages
+    #[arg(short, long)]
+    pub quiet: bool,
 }
