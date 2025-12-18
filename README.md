@@ -209,6 +209,32 @@ dtx batch jobs.yaml --set env=production
 dtx batch jobs.yaml --continue-on-error
 ```
 
+### Shell Completions
+
+```bash
+# Generate completions for your shell
+dtx completions bash   # Bash
+dtx completions zsh    # Zsh
+dtx completions fish   # Fish
+dtx completions powershell  # PowerShell
+
+# Install Bash completions
+eval "$(dtx completions bash)"
+# Or save to file:
+dtx completions bash > ~/.local/share/bash-completion/completions/dtx
+
+# Install Zsh completions
+eval "$(dtx completions zsh)"
+# Or save to fpath:
+dtx completions zsh > ~/.zsh/completions/_dtx
+
+# Install Fish completions
+dtx completions fish > ~/.config/fish/completions/dtx.fish
+
+# Install PowerShell completions
+dtx completions powershell | Out-String | Invoke-Expression
+```
+
 ## Features
 
 ### Phase 1 (v0.1.0) - Foundation
@@ -244,6 +270,10 @@ dtx batch jobs.yaml --continue-on-error
 - JSON Patch (RFC 6902) support
 - Template rendering with variable substitution
 - Batch processing for automation
+
+### Phase 7 (v0.7.0) - Shell Completions
+- Shell completion scripts for Bash, Zsh, Fish, PowerShell, Elvish
+- Auto-complete subcommands, options, and arguments
 
 ## Merge Strategies
 
@@ -320,7 +350,6 @@ jobs:
 
 ## Roadmap
 
-- **Phase 7**: i18n and shell completions
 - **Phase 8**: AI-powered natural language queries
 
 ## License

@@ -5,8 +5,8 @@ use clap::Parser;
 
 use dtx::cli::args::{Cli, Commands};
 use dtx::cli::commands::{
-    auto, batch, convert, csv, diff, json, merge, patch, query, schema, template, toml, validate,
-    xml, yaml,
+    auto, batch, completions, convert, csv, diff, json, merge, patch, query, schema, template,
+    toml, validate, xml, yaml,
 };
 
 fn main() -> Result<()> {
@@ -33,6 +33,7 @@ fn main() -> Result<()> {
         Commands::Patch(args) => patch::execute(args)?,
         Commands::Template(args) => template::execute(args)?,
         Commands::Batch(args) => batch::execute(args)?,
+        Commands::Completions(args) => completions::execute(args)?,
     }
 
     Ok(())

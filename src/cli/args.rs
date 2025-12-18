@@ -1,6 +1,7 @@
 //! CLI argument definitions using clap
 
 use clap::{Parser, Subcommand};
+use clap_complete::Shell;
 use std::path::PathBuf;
 
 /// dtx - Data Transformation Swiss Army Knife
@@ -62,6 +63,9 @@ pub enum Commands {
 
     /// Execute batch jobs from config file
     Batch(BatchArgs),
+
+    /// Generate shell completion scripts
+    Completions(CompletionsArgs),
 }
 
 /// Arguments for the json subcommand
@@ -395,4 +399,12 @@ pub struct BatchArgs {
     /// Suppress output messages
     #[arg(short, long)]
     pub quiet: bool,
+}
+
+/// Arguments for the completions subcommand
+#[derive(Parser, Debug)]
+pub struct CompletionsArgs {
+    /// Shell to generate completions for
+    #[arg(value_enum)]
+    pub shell: Shell,
 }

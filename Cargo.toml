@@ -1,6 +1,6 @@
 [package]
 name = "dtx"
-version = "0.6.0"
+version = "0.7.0"
 edition = "2021"
 authors = ["hiroki-abe-58"]
 description = "A Swiss Army knife CLI for data transformation between JSON, YAML, TOML, CSV, and XML"
@@ -12,6 +12,7 @@ categories = ["command-line-utilities", "encoding"]
 [dependencies]
 # CLI framework
 clap = { version = "4", features = ["derive"] }
+clap_complete = "4"
 
 # Serialization
 serde = { version = "1", features = ["derive"] }

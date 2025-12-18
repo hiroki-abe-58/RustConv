@@ -2,6 +2,7 @@
 
 pub mod auto;
 pub mod batch;
+pub mod completions;
 pub mod convert;
 pub mod csv;
 pub mod diff;
