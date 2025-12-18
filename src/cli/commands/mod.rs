@@ -1,6 +1,7 @@
 //! Command implementations
 
 pub mod auto;
+pub mod convert;
 pub mod csv;
 pub mod json;
 pub mod toml;

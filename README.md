@@ -18,104 +18,127 @@ cargo build --release
 
 ## Usage
 
-### JSON
+### Format-specific Commands
 
 ```bash
-# From file
+# JSON
 dtx json input.json
-
-# From stdin
-cat data.json | dtx json
-
-# Compact output
 dtx json input.json --compact
 
-# Disable color output
-dtx json input.json --no-color
-```
-
-### YAML
-
-```bash
+# YAML
 dtx yaml input.yaml
-cat data.yaml | dtx yaml
-```
 
-### TOML
-
-```bash
+# TOML
 dtx toml input.toml
 dtx toml input.toml --compact
-```
 
-### CSV
-
-```bash
-# Display as formatted table
+# CSV (displays as formatted table)
 dtx csv input.csv
+dtx csv input.csv --raw          # Output raw CSV
+dtx csv input.csv --no-headers   # First row is data
 
-# Output raw CSV
-dtx csv input.csv --raw
-
-# Treat first row as data (no headers)
-dtx csv input.csv --no-headers
-```
-
-### XML
-
-```bash
-# Pretty print XML
+# XML
 dtx xml input.xml
-
-# Minify XML
 dtx xml input.xml --compact
+
+# Auto-detect format
+dtx auto input.json
+dtx auto input.yaml --quiet
 ```
 
-### Auto-detect Format
+### Format Conversion
 
 ```bash
-# Automatically detect format from file extension or content
-dtx auto input.json
-dtx auto input.yaml
-dtx auto data.csv
+# Basic conversion
+dtx convert input.json --to yaml
+dtx convert input.yaml --to json
+dtx convert input.json --to toml
+dtx convert data.csv --to json
 
-# Suppress format detection message
-dtx auto input.json --quiet
+# Multiple target formats (comma-separated)
+dtx convert input.json --to yaml,toml,csv
+
+# Specify source format explicitly
+dtx convert input.txt --from json --to yaml
+
+# Output to file
+dtx convert input.json --to yaml --output output.yaml
+
+# Pipe from stdin
+cat data.json | dtx convert --from json --to yaml
 ```
+
+### Supported Conversions
+
+| From | To JSON | To YAML | To TOML | To CSV | To XML |
+|------|---------|---------|---------|--------|--------|
+| JSON | -       | Yes     | Yes     | Yes*   | Yes    |
+| YAML | Yes     | -       | Yes     | Yes*   | Yes    |
+| TOML | Yes     | Yes     | -       | Yes*   | Yes    |
+| CSV  | Yes     | Yes     | -       | -      | -      |
+| XML  | Yes     | Yes     | -       | -      | -      |
+
+*CSV conversion requires array of objects structure
 
 ## Features
 
 ### Phase 1 (v0.1.0) - Foundation
-- JSON reading and pretty printing
-- YAML reading and pretty printing
+- JSON/YAML reading and pretty printing
 - Standard input / file input support
 - Syntax highlighting with color output
 
 ### Phase 2 (v0.2.0) - Format Support
-- TOML reading and pretty printing
-- CSV reading with table formatting
-- XML reading and pretty printing
+- TOML/CSV/XML reading and pretty printing
 - Auto format detection (from extension and content)
-- Syntax highlighting for all formats
+- CSV table formatting
+
+### Phase 3 (v0.3.0) - Conversion Engine
+- Full cross-format conversion support
+- Multiple target formats in single command
+- File output support
+- Intermediate JSON representation for lossless conversion
 
 ## Roadmap
 
-- **Phase 3**: Cross-format conversion engine (JSON <-> YAML <-> TOML <-> CSV <-> XML)
 - **Phase 4**: JSONPath query and jq-compatible filters
 - **Phase 5**: Schema validation and diff
 - **Phase 6**: Merge, patch, template, and batch processing
 - **Phase 7**: i18n and shell completions
 - **Phase 8**: AI-powered natural language queries
 
-## Supported Formats
+## Examples
 
-| Format | Read | Pretty Print | Compact | Auto-detect |
-|--------|------|--------------|---------|-------------|
-| JSON   | Yes  | Yes          | Yes     | Yes         |
-| YAML   | Yes  | Yes          | -       | Yes         |
-| TOML   | Yes  | Yes          | Yes     | Yes         |
-| CSV    | Yes  | Table/Raw    | -       | Yes         |
-| XML    | Yes  | Yes          | Yes     | Yes         |
+### Convert JSON config to YAML
+
+```bash
+dtx convert config.json --to yaml
+```
+
+### Convert CSV data to JSON array
+
+```bash
+dtx convert users.csv --to json
+```
+
+Output:
+```json
+[
+  {"name": "Alice", "age": 30},
+  {"name": "Bob", "age": 25}
+]
+```
+
+### Convert XML to JSON
+
+```bash
+dtx convert data.xml --to json
+```
+
+### Batch convert to multiple formats
+
+```bash
+dtx convert config.json --to yaml,toml
+```
 
 ## License
 

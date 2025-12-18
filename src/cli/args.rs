@@ -35,6 +35,9 @@ pub enum Commands {
 
     /// Auto-detect format and display
     Auto(AutoArgs),
+
+    /// Convert between formats
+    Convert(ConvertArgs),
 }
 
 /// Arguments for the json subcommand
@@ -100,5 +103,28 @@ pub struct AutoArgs {
 
     /// Suppress format detection message
     #[arg(short, long)]
+    pub quiet: bool,
+}
+
+/// Arguments for the convert subcommand
+#[derive(Parser, Debug)]
+pub struct ConvertArgs {
+    /// Input file (reads from stdin if not provided)
+    pub input: Option<PathBuf>,
+
+    /// Target format(s), comma-separated (e.g., yaml,toml,csv)
+    #[arg(short, long, required = true)]
+    pub to: String,
+
+    /// Source format (auto-detected if not specified)
+    #[arg(short, long)]
+    pub from: Option<String>,
+
+    /// Output file (outputs to stdout if not specified)
+    #[arg(short, long)]
+    pub output: Option<PathBuf>,
+
+    /// Suppress conversion messages
+    #[arg(long)]
     pub quiet: bool,
 }
